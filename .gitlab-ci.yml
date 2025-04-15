@@ -1,0 +1,4 @@
+include:
+  - project: 'procurement-platform/procurement-common-libraries/reused-ci-configurations'
+    ref: 'main'
+    file: 'base.gitlab-ci.yml'
