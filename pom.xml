@@ -75,11 +75,6 @@
     <dependencies>
       <dependency>
         <groupId>com.mercateo.common</groupId>
-        <artifactId>util-io</artifactId>
-        <version>0.0.12</version>
-      </dependency>
-      <dependency>
-        <groupId>com.mercateo.common</groupId>
         <artifactId>util-annotations</artifactId>
         <version>0.0.8</version>
       </dependency>
