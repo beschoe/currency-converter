@@ -26,10 +26,9 @@ public class CurrencyConverter {
     /**
      * Creates a new currency converter with the specified exchange rates.
      *
-     * @param rates A collection of exchange rates
      * @throws IllegalStateException if duplicate exchange rates are provided
      */
-    public CurrencyConverter(Collection<ExchangeRate> rateCollection) {
+    public CurrencyConverter(Collection<ExchangeRate> rateCollection) throws IllegalStateException {
         super();
         this.directRates = new EnumMap<>(ConvertableCurrency.class);
         rateCollection.forEach(rate -> directRates.put(rate.getQuoteCurrency(),  rate));
@@ -52,12 +51,9 @@ public class CurrencyConverter {
     /**
      * Converts a monetary amount to the specified currency using the currency's default rounding mode.
      *
-     * @param fromAmount The monetary amount to convert
-     * @param toCurrency The target currency
-     * @return A new Money object with the converted amount in the target currency
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public Money convert(Money fromAmount, ConvertableCurrency toCurrency) {
+    public Money convert(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
         return convert(fromAmount, toCurrency, toCurrency.getRoundingMode());
     }
 
@@ -66,7 +62,7 @@ public class CurrencyConverter {
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public Money convert(Money fromAmount, ConvertableCurrency toCurrency, RoundingMode roundingMode) {
+    public Money convert(Money fromAmount, ConvertableCurrency toCurrency, RoundingMode roundingMode) throws IllegalArgumentException {
         if(fromAmount.getCurrency().equals(toCurrency))
             return fromAmount;
         ExchangeRate exchangeRate = getExchangeRate(fromAmount.getCurrency(), toCurrency);
@@ -78,7 +74,7 @@ public class CurrencyConverter {
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public ExchangeRate getExchangeRate(ConvertableCurrency fromCurrency, ConvertableCurrency toCurrency) {
+    public ExchangeRate getExchangeRate(ConvertableCurrency fromCurrency, ConvertableCurrency toCurrency) throws IllegalArgumentException {
         return computeExchangeRateIfAbsent(fromCurrency, toCurrency,
                 fromCurrency == toCurrency ? ExchangeRate::identity : x -> calculateDerivedRate(fromCurrency, toCurrency));
     }
