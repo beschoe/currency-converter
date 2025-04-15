@@ -19,6 +19,15 @@ import com.mercateo.common.util.annotations.Nullable;
  * This class also handles caching of combined rates for efficient conversion between currencies.
  */
 public class ExchangeRate {
+    /**
+     * If division needs to be performed, this is the rounding mode.
+     */
+    private static final RoundingMode DIVISION_ROUNDING_MODE = RoundingMode.HALF_EVEN;
+
+    /**
+     * If division needs to be performed, use this as maximum scale.
+     */
+    private static final int DIVISION_SCALE = 10;
 
     static ExchangeRate identity(ConvertableCurrency currency) {
         Money money = new Money(BigDecimal.ONE, currency);
@@ -48,9 +57,8 @@ public class ExchangeRate {
             return rateValue;
         BigDecimal quoteAmount = quoteValue.getAmount();
         BigDecimal baseAmount = baseValue.getAmount();
-        int scale = quoteValue.getCurrency().getDefaultScale() + 5;
         return rateValue = new Money(
-                quoteAmount.divide(baseAmount, scale, RoundingMode.HALF_EVEN).stripTrailingZeros(),
+                quoteAmount.divide(baseAmount, DIVISION_SCALE, DIVISION_ROUNDING_MODE).stripTrailingZeros(),
                 quoteValue.getCurrency());
     }
 

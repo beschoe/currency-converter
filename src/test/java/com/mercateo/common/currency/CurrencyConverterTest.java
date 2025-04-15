@@ -21,10 +21,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.mercateo.common.currency.CurrencyConverter;
-import com.mercateo.common.currency.ExchangeRate;
-import com.mercateo.common.currency.Money;
-
 public class CurrencyConverterTest {
     private static final Money EUR_RATE = new Money(BigDecimal.ONE, EUR);
     private static final Money HUF_RATE = new Money(new BigDecimal("400"), HUF);
@@ -125,13 +121,13 @@ public class CurrencyConverterTest {
         assertThat(uut.getExchangeRate(HUF, EUR).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.0025"));
 
         assertThat(uut.getExchangeRate(EUR, GBP).getRateValue().getAmount()).isEqualTo(GBP_RATE.getAmount());
-        assertThat(uut.getExchangeRate(GBP, EUR).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("1.1904762"));
+        assertThat(uut.getExchangeRate(GBP, EUR).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("1.1904761905"));
 
         assertThat(uut.getExchangeRate(EUR, USD).getRateValue().getAmount()).isEqualTo(USD_RATE.getAmount());
-        assertThat(uut.getExchangeRate(USD, EUR).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.9174312"));
+        assertThat(uut.getExchangeRate(USD, EUR).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.9174311927"));
 
-        assertThat(uut.getExchangeRate(GBP, USD).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("1.297619"));
-        assertThat(uut.getExchangeRate(USD, GBP).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.7706422"));
+        assertThat(uut.getExchangeRate(GBP, USD).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("1.2976190476"));
+        assertThat(uut.getExchangeRate(USD, GBP).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.7706422018"));
     }
 
     @Test
