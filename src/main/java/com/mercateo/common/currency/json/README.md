@@ -10,18 +10,6 @@ To use the Jackson integration:
 // Create an ObjectMapper with Money support
 ObjectMapper mapper = new ObjectMapper();
 mapper.registerModule(new MoneyJacksonModule());
-
-// Serialize Money
-Money money = new Money(new BigDecimal("99.99"), KnownCurrencies.EUR);
-String json = mapper.writeValueAsString(money);
-
-// Deserialize Money
-Money deserialized = mapper.readValue(json, Money.class);
-
-// You can also serialize/deserialize ExchangeRate and CurrencyConverter
-CurrencyConverter converter = new CurrencyConverter(rates);
-String converterJson = mapper.writeValueAsString(converter);
-CurrencyConverter deserializedConverter = mapper.readValue(converterJson, CurrencyConverter.class);
 ```
 
 ## JSON Format
@@ -50,35 +38,6 @@ ExchangeRate objects are serialized as:
 }
 ```
 
-CurrencyConverter objects are serialized as:
-
-```json
-{
-  "rates": [
-    {
-      "baseValue": {
-        "amount": "1",
-        "currency": "EUR"
-      },
-      "quoteValue": {
-        "amount": "1.12",
-        "currency": "USD"
-      }
-    },
-    {
-      "baseValue": {
-        "amount": "1",
-        "currency": "EUR"
-      },
-      "quoteValue": {
-        "amount": "0.85",
-        "currency": "GBP"
-      }
-    }
-  ]
-}
-```
-
 ## Implementation Details
 
-This package uses Jackson's mixin functionality to provide serialization/deserialization for Money, ExchangeRate, and CurrencyConverter classes without modifying the original classes. The KnownCurrencies enum is handled by custom serializers and deserializers. 
+This package uses Jackson's mixin functionality to provide serialization/deserialization for Money and ExchangeRate objects.
