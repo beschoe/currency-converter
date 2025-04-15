@@ -6,7 +6,7 @@
     <version>0.0.10</version>
   </parent>
   <artifactId>currency-converter</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.1</version>
 
   <properties>
     <jackson.version>2.15.2</jackson.version>
@@ -86,4 +86,8 @@
     </dependencies>
   </dependencyManagement>
 
+
+  <scm>
+    <tag>0.0.1</tag>
+  </scm>
 </project>
