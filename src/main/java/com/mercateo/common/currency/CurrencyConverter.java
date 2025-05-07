@@ -49,24 +49,35 @@ public class CurrencyConverter {
 
 
     /**
-     * Converts a monetary amount to the specified currency using the currency's default rounding mode.
+     * Converts a monetary amount using invoice-specific decimal places.
+     * Specifically designed for invoice calculations where special decimal place rules apply.
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public Money convert(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
-        return convert(fromAmount, toCurrency, toCurrency.getRoundingMode());
+    public Money convertForInvoice(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
+        return convert(fromAmount, toCurrency, DecimalPlacesStrategy.FOR_INVOICE, toCurrency.getRoundingMode());
     }
 
     /**
-     * Converts a monetary amount to the specified currency using the provided rounding mode.
+     * Converts a monetary amount using calculation-specific decimal places.
+     * Designed for general calculations where standard decimal place rules apply.
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public Money convert(Money fromAmount, ConvertableCurrency toCurrency, RoundingMode roundingMode) throws IllegalArgumentException {
+    public Money convertForCalculations(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
+        return convert(fromAmount, toCurrency, DecimalPlacesStrategy.FOR_CALCULATIONS, toCurrency.getRoundingMode());
+    }
+
+    /**
+     * Converts a monetary amount using the provided decimal places strategy and rounding mode.
+     *
+     * @throws IllegalArgumentException if an exchange rate for either currency is not found
+     */
+    public Money convert(Money fromAmount, ConvertableCurrency toCurrency, DecimalPlacesStrategy decimalPlacesStrategy, RoundingMode roundingMode) throws IllegalArgumentException {
         if(fromAmount.getCurrency().equals(toCurrency))
             return fromAmount;
         ExchangeRate exchangeRate = getExchangeRate(fromAmount.getCurrency(), toCurrency);
-        return exchangeRate.convert(fromAmount, roundingMode);
+        return exchangeRate.convert(fromAmount, decimalPlacesStrategy, roundingMode);
     }
 
     /**

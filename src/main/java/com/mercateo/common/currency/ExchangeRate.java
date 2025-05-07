@@ -62,8 +62,12 @@ public class ExchangeRate {
                 quoteValue.getCurrency());
     }
 
-    Money convert(Money amount, RoundingMode roundingMode) {
-        return amount.convert(getRateValue(), roundingMode);
+    /**
+     * Converts a monetary amount using this exchange rate with the specified decimal places strategy
+     * and rounding mode.
+     */
+    Money convert(Money amount, DecimalPlacesStrategy decimalPlacesStrategy, RoundingMode roundingMode) {
+        return amount.convert(getRateValue(), decimalPlacesStrategy, roundingMode);
     }
 
     ConvertableCurrency getQuoteCurrency() {

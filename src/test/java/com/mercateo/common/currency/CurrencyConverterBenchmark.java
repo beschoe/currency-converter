@@ -28,19 +28,18 @@ public class CurrencyConverterBenchmark {
     private static final Money USD_TO_GBP_RATE = new Money(RATE_USD_TO_GBP, ConvertableCurrency.USD);
 
     @Setup(Level.Iteration)
-    public void setUp() {
-    }
+    public void setUp() {/**/}
 
     @Benchmark
     public Money moneyExchange_highPrecision() {
         final Money price = new Money(new BigDecimal("3.12345"), ConvertableCurrency.GBP);
-        final Money convertedPrice = moneyExchange.convert(price, ConvertableCurrency.USD);
+        final Money convertedPrice = moneyExchange.convertForInvoice(price, ConvertableCurrency.USD);
         return convertedPrice;
     }
     @Benchmark
     public Money money_highPrecision() {
         final Money price = new Money(new BigDecimal("3.12345"), ConvertableCurrency.GBP);
-        final Money convertedPrice = price.convert(USD_TO_GBP_RATE);
+        final Money convertedPrice = price.convert(USD_TO_GBP_RATE, DecimalPlacesStrategy.FOR_CALCULATIONS);
         return convertedPrice;
     }
 
@@ -54,14 +53,14 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money moneyExchange_lowPrecision() {
         final Money price = new Money(new BigDecimal("3.12"), ConvertableCurrency.EUR);
-        final Money convertedPrice = moneyExchange.convert(price, ConvertableCurrency.USD);
+        final Money convertedPrice = moneyExchange.convertForInvoice(price, ConvertableCurrency.USD);
         return convertedPrice;
     }
 
     @Benchmark
     public Money money_lowPrecision() {
         final Money price = new Money(new BigDecimal("3.12"), ConvertableCurrency.EUR);
-        final Money convertedPrice = price.convert(USD_RATE);
+        final Money convertedPrice = price.convert(USD_RATE, DecimalPlacesStrategy.FOR_CALCULATIONS);
         return convertedPrice;
     }
 
