@@ -66,8 +66,12 @@ public class ExchangeRate {
      * Converts a monetary amount using this exchange rate with the specified decimal places strategy
      * and rounding mode.
      */
-    Money convert(Money amount, DecimalPlacesStrategy decimalPlacesStrategy, RoundingMode roundingMode) {
-        return amount.convert(getRateValue(), decimalPlacesStrategy, roundingMode);
+    Money convert(Money from, DecimalPlacesStrategy decimalPlacesStrategy, RoundingMode roundingMode) {
+        Money exchangeRate = getRateValue();
+        ConvertableCurrency rateCurrency = exchangeRate.getCurrency();
+        final int newScale = decimalPlacesStrategy.getRequiredScale(from, rateCurrency);
+        BigDecimal convertedAmount = from.getAmount().multiply(exchangeRate.getAmount());
+        return new Money(convertedAmount.setScale(newScale, roundingMode), rateCurrency);
     }
 
     ConvertableCurrency getQuoteCurrency() {

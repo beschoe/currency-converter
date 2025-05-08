@@ -23,9 +23,10 @@ public class CurrencyConverterBenchmark {
     private static final CurrencyConverter moneyExchange = new CurrencyConverter(asList(
             new ExchangeRate(EUR_RATE, EUR_RATE), new ExchangeRate(EUR_RATE, HUF_RATE),
             new ExchangeRate(EUR_RATE, GBP_RATE), new ExchangeRate(EUR_RATE, USD_RATE)));
-    private static final BigDecimal RATE_USD_TO_GBP = new BigDecimal("1.297619058");
-    private static final BigDecimal RATE_USD_TO_EUR = new BigDecimal("1.09");
-    private static final Money USD_TO_GBP_RATE = new Money(RATE_USD_TO_GBP, ConvertableCurrency.USD);
+    private static final BigDecimal RATE_VALUE_GBP_TO_USD = new BigDecimal("1.297619058");
+    private static final BigDecimal RATE_VALUE_EUR_TO_USD = new BigDecimal("1.09");
+    private static final ExchangeRate RATE_USD_TO_EUR = moneyExchange.getExchangeRate(ConvertableCurrency.USD, ConvertableCurrency.EUR);
+    private static final ExchangeRate RATE_GBP_TO_USD = moneyExchange.getExchangeRate(ConvertableCurrency.GBP, ConvertableCurrency.USD);
 
     @Setup(Level.Iteration)
     public void setUp() {/**/}
@@ -39,14 +40,14 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money money_highPrecision() {
         final Money price = new Money(new BigDecimal("3.12345"), ConvertableCurrency.GBP);
-        final Money convertedPrice = price.convert(USD_TO_GBP_RATE, DecimalPlacesStrategy.FOR_CALCULATIONS);
+        final Money convertedPrice = RATE_GBP_TO_USD.convert(price, DecimalPlacesStrategy.FOR_CALCULATIONS, RoundingMode.HALF_EVEN);
         return convertedPrice;
     }
 
     @Benchmark
     public BigDecimal bigDecimal_highPrecision() {
         BigDecimal amount = new BigDecimal("3.12345");
-        BigDecimal result = amount.multiply(RATE_USD_TO_GBP).setScale(5, RoundingMode.HALF_EVEN);
+        BigDecimal result = amount.multiply(RATE_VALUE_GBP_TO_USD).setScale(5, RoundingMode.HALF_EVEN);
         return result;
     }
 
@@ -60,14 +61,14 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money money_lowPrecision() {
         final Money price = new Money(new BigDecimal("3.12"), ConvertableCurrency.EUR);
-        final Money convertedPrice = price.convert(USD_RATE, DecimalPlacesStrategy.FOR_CALCULATIONS);
+        final Money convertedPrice = RATE_USD_TO_EUR.convert(price, DecimalPlacesStrategy.FOR_CALCULATIONS, RoundingMode.HALF_EVEN);
         return convertedPrice;
     }
 
     @Benchmark
     public BigDecimal bigDecimal_lowPrecision() {
         BigDecimal amount = new BigDecimal("3.12");
-        BigDecimal result = amount.multiply(RATE_USD_TO_EUR).setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal result = amount.multiply(RATE_VALUE_EUR_TO_USD).setScale(2, RoundingMode.HALF_EVEN);
         return result;
     }
 }
