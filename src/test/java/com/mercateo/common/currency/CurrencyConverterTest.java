@@ -45,7 +45,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertPriceInEUR_toPriceInHUF_forCalculations() throws Exception {
         final Money price = new Money(new BigDecimal("1.010101"),EUR);
-        final Money convertedPrice = uut.convertForCalculations(price,HUF);
+        final Money convertedPrice = uut.convertProportionally(price,HUF);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("404.0404"),HUF));
     }
 
@@ -59,7 +59,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertHighPrecisionPriceInEUR_toPriceInHUF() throws Exception {
         final Money price = new Money(new BigDecimal("1.0000"),EUR);
-        final Money convertedPrice = uut.convertForCalculations(price,HUF);
+        final Money convertedPrice = uut.convertProportionally(price,HUF);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("400.00"),HUF));
     }
 
@@ -88,7 +88,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertPriceInUSD_toPriceInUSD_withDecimalPlacesForCalculations() throws Exception {
         final Money price = new Money(new BigDecimal("1.0101"),USD);
-        final Money convertedPrice = uut.convertForCalculations(price, USD);
+        final Money convertedPrice = uut.convertProportionally(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.0101"), USD));
     }
 
@@ -102,7 +102,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertHighPrecisionPriceInGBP_toPriceInUSD() throws Exception {
         final Money price = new Money(new BigDecimal("3.12345"), GBP);
-        final Money convertedPrice = uut.convertForCalculations(price, USD);
+        final Money convertedPrice = uut.convertProportionally(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("4.05305"), USD));
     }
 
@@ -124,7 +124,7 @@ public class CurrencyConverterTest {
     public void convertPriceInEUR_toPriceInDEM_roundingUp() throws Exception {
         final Money price = new Money(new BigDecimal("1"), EUR);
         final Money convertedPrice = uut.convert(price, DEM,
-                DecimalPlacesStrategy.FOR_CALCULATIONS, RoundingMode.UP);
+                DecimalPlacesStrategy.PROPORTIONAL, RoundingMode.UP);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("2"),DEM));
     }
 
@@ -132,7 +132,7 @@ public class CurrencyConverterTest {
     public void convertPriceInEUR_toPriceInDEM_roundingDown() throws Exception {
         final Money price = new Money(new BigDecimal("1"), EUR);
         final Money convertedPrice = uut.convert(price, DEM,
-                DecimalPlacesStrategy.FOR_CALCULATIONS, RoundingMode.DOWN);
+                DecimalPlacesStrategy.PROPORTIONAL, RoundingMode.DOWN);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1"),DEM));
     }
 

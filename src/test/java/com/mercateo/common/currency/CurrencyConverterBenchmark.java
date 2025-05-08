@@ -40,7 +40,7 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money money_highPrecision() {
         final Money price = new Money(new BigDecimal("3.12345"), ConvertableCurrency.GBP);
-        final Money convertedPrice = RATE_GBP_TO_USD.convert(price, DecimalPlacesStrategy.FOR_CALCULATIONS, RoundingMode.HALF_EVEN);
+        final Money convertedPrice = RATE_GBP_TO_USD.convert(price, DecimalPlacesStrategy.PROPORTIONAL, RoundingMode.HALF_EVEN);
         return convertedPrice;
     }
 
@@ -61,7 +61,7 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money money_lowPrecision() {
         final Money price = new Money(new BigDecimal("3.12"), ConvertableCurrency.EUR);
-        final Money convertedPrice = RATE_USD_TO_EUR.convert(price, DecimalPlacesStrategy.FOR_CALCULATIONS, RoundingMode.HALF_EVEN);
+        final Money convertedPrice = RATE_USD_TO_EUR.convert(price, DecimalPlacesStrategy.PROPORTIONAL, RoundingMode.HALF_EVEN);
         return convertedPrice;
     }
 

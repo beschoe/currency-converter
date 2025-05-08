@@ -64,8 +64,8 @@ public class CurrencyConverter {
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public Money convertForCalculations(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
-        return convert(fromAmount, toCurrency, DecimalPlacesStrategy.FOR_CALCULATIONS, toCurrency.getRoundingMode());
+    public Money convertProportionally(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
+        return convert(fromAmount, toCurrency, DecimalPlacesStrategy.PROPORTIONAL, toCurrency.getRoundingMode());
     }
 
     /**

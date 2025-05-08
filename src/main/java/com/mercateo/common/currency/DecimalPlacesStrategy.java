@@ -9,7 +9,7 @@ public enum DecimalPlacesStrategy {
      * Strategy for general calculations that preserves relative decimal precision.
      * Adjusts scale based on the difference between source and target currency default scales.
      */
-    FOR_CALCULATIONS {
+    PROPORTIONAL {
         @Override
         public int getRequiredScale(Money convertedMoney, ConvertableCurrency targetCurrency) {
             return convertedMoney.getAmount().scale()
@@ -30,7 +30,7 @@ public enum DecimalPlacesStrategy {
 
     /**
      * Determines the required scale (decimal places) for a currency conversion.
-     * 
+     *
      * @param convertedMoney The money amount being converted
      * @param targetCurrency The target currency for the conversion
      * @return The number of decimal places to use in the result
