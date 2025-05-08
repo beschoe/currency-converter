@@ -6,7 +6,6 @@
 package com.mercateo.common.currency;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
 
 import com.mercateo.common.util.annotations.Nullable;
@@ -49,17 +48,6 @@ public class Money {
      */
     public ConvertableCurrency getCurrency() {
         return currency;
-    }
-
-    Money convert(Money exchangeRate) {
-        return convert(exchangeRate, exchangeRate.getCurrency().getRoundingMode());
-    }
-
-    Money convert(Money exchangeRate, RoundingMode roundingMode) {
-        ConvertableCurrency rateCurrency = exchangeRate.getCurrency();
-        final int newScale = amount.scale() + rateCurrency.getDefaultScale() - currency.getDefaultScale();
-        BigDecimal convertedAmount = amount.multiply(exchangeRate.amount);
-        return new Money(convertedAmount.setScale(newScale, roundingMode), rateCurrency);
     }
 
     @Override

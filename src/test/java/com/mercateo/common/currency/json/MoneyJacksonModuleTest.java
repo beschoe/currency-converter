@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercateo.common.currency.ConvertableCurrency;
 import com.mercateo.common.currency.ExchangeRate;
 import com.mercateo.common.currency.Money;
-import com.mercateo.common.currency.json.MoneyJacksonModule;
 
 @SuppressWarnings("null")
 public class MoneyJacksonModuleTest {

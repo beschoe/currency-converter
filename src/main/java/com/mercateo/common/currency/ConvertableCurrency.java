@@ -113,6 +113,7 @@ public enum ConvertableCurrency {
      */
     MXN;
 
+    @SuppressWarnings("null")
     public static ConvertableCurrency valueOf(Currency currency) {
         KnownCurrencies fromCurrency = KnownCurrencies.parseFromCurrency(currency);
         return valueOf(fromCurrency);
