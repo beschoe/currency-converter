@@ -74,8 +74,13 @@ public class CurrencyConverter {
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
     public Money convert(Money fromAmount, ConvertableCurrency toCurrency, DecimalPlacesStrategy decimalPlacesStrategy, RoundingMode roundingMode) throws IllegalArgumentException {
-        if(fromAmount.getCurrency().equals(toCurrency))
-            return fromAmount;
+        if(fromAmount.getCurrency().equals(toCurrency)) {
+            final int requiredScale = decimalPlacesStrategy.getRequiredScale(fromAmount, toCurrency);
+            if(requiredScale == fromAmount.getAmount().scale())
+                return fromAmount;
+            else
+                return new Money(fromAmount.getAmount().setScale(requiredScale, roundingMode), toCurrency);
+        }
         ExchangeRate exchangeRate = getExchangeRate(fromAmount.getCurrency(), toCurrency);
         return exchangeRate.convert(fromAmount, decimalPlacesStrategy, roundingMode);
     }

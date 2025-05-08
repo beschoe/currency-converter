@@ -78,10 +78,18 @@ public class CurrencyConverterTest {
     }
 
     @Test
-    public void convertPriceInUSD_toPriceInUSD() throws Exception {
-        final Money price = new Money(new BigDecimal("1.00"),USD);
+    public void convertPriceInUSD_toPriceInUSD_withDecimalPlacesForInfoice() throws Exception {
+        final Money price = new Money(new BigDecimal("1.0101"),USD);
         final Money convertedPrice = uut.convertForInvoice(price, USD);
-        assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.00"), USD));
+        assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.01"), USD));
+    }
+
+
+    @Test
+    public void convertPriceInUSD_toPriceInUSD_withDecimalPlacesForCalculations() throws Exception {
+        final Money price = new Money(new BigDecimal("1.0101"),USD);
+        final Money convertedPrice = uut.convertForCalculations(price, USD);
+        assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.0101"), USD));
     }
 
     @Test
