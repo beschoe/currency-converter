@@ -44,6 +44,9 @@ public class MoneyJacksonModuleTest {
         String json = objectMapper.writeValueAsString(exchangeRate);
         ExchangeRate deserialized = objectMapper.readValue(json, ExchangeRate.class);
 
+        assertThat(json).contains("baseValue");
+        assertThat(json).contains("quoteValue");
+        assertThat(json).doesNotContain("rateValue");
         assertThat(deserialized).isEqualTo(exchangeRate);
     }
 }

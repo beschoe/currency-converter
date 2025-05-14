@@ -1,6 +1,7 @@
 package com.mercateo.common.currency.json;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mercateo.common.currency.Money;
 
@@ -22,4 +23,7 @@ abstract class ExchangeRateMixin {
 
     @JsonProperty("quoteValue")
     abstract Money getQuoteValue();
+
+    @JsonIgnore
+    abstract Money getRateValue();
 }
