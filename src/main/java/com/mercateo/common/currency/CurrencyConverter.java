@@ -54,8 +54,8 @@ public class CurrencyConverter {
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */
-    public Money convertForInvoice(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
-        return convert(fromAmount, toCurrency, DecimalPlacesStrategy.FOR_INVOICE, toCurrency.getRoundingMode());
+    public Money convertToPrice(Money fromAmount, ConvertableCurrency toCurrency) throws IllegalArgumentException {
+        return convert(fromAmount, toCurrency, DecimalPlacesStrategy.TO_PRICE, toCurrency.getRoundingMode());
     }
 
     /**

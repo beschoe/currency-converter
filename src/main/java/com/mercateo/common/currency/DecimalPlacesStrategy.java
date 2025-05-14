@@ -18,10 +18,10 @@ public enum DecimalPlacesStrategy {
         }
     },
     /**
-     * Strategy for invoice formatting that uses the target currency's default scale.
-     * Ensures consistent display of monetary amounts on invoices.
+     * Strategy for price calculation that uses the target currency's default scale.
+     * Ensures consistent representation of monetary amounts on invoices.
      */
-    FOR_INVOICE {
+    TO_PRICE {
         @Override
         public int getRequiredScale(Money convertedMoney, ConvertableCurrency targetCurrency) {
             return targetCurrency.getDefaultScale();

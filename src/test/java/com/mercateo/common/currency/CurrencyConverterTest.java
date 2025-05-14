@@ -38,7 +38,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertPriceInEUR_toPriceInHUF_forInvoice() throws Exception {
         final Money price = new Money(new BigDecimal("1.010101"),EUR);
-        final Money convertedPrice = uut.convertForInvoice(price,HUF);
+        final Money convertedPrice = uut.convertToPrice(price,HUF);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("405"),HUF));
     }
 
@@ -52,7 +52,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertPriceInHUF_toPriceInEUR() throws Exception {
         final Money price = new Money(new BigDecimal("1000"),HUF);
-        final Money convertedPrice = uut.convertForInvoice(price,EUR);
+        final Money convertedPrice = uut.convertToPrice(price,EUR);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("2.50"),EUR));
     }
 
@@ -66,21 +66,21 @@ public class CurrencyConverterTest {
     @Test
     public void convertPriceInEUR_toPriceInUSD() throws Exception {
         final Money price = new Money(new BigDecimal("1.00"), EUR);
-        final Money convertedPrice = uut.convertForInvoice(price, USD);
+        final Money convertedPrice = uut.convertToPrice(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.09"), USD));
     }
 
     @Test
     public void convertPriceInUSD_toPriceInEUR() throws Exception {
         final Money price = new Money(new BigDecimal("1.00"),USD);
-        final Money convertedPrice = uut.convertForInvoice(price, EUR);
+        final Money convertedPrice = uut.convertToPrice(price, EUR);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("0.92"), EUR));
     }
 
     @Test
     public void convertPriceInUSD_toPriceInUSD_withDecimalPlacesForInfoice() throws Exception {
         final Money price = new Money(new BigDecimal("1.0101"),USD);
-        final Money convertedPrice = uut.convertForInvoice(price, USD);
+        final Money convertedPrice = uut.convertToPrice(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.01"), USD));
     }
 
@@ -95,7 +95,7 @@ public class CurrencyConverterTest {
     @Test
     public void convertHighPrecisionPriceInGBP_toPriceInUSD_forInvoice() throws Exception {
         final Money price = new Money(new BigDecimal("3.12345"), GBP);
-        final Money convertedPrice = uut.convertForInvoice(price, USD);
+        final Money convertedPrice = uut.convertToPrice(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("4.05"), USD));
     }
 
@@ -109,14 +109,14 @@ public class CurrencyConverterTest {
     @Test
     public void convertPriceInGBP_toPriceInUSD() throws Exception {
         final Money price = new Money(new BigDecimal("1.00"), GBP);
-        final Money convertedPrice = uut.convertForInvoice(price, USD);
+        final Money convertedPrice = uut.convertToPrice(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.30"), USD));
     }
 
     @Test
     public void convertPriceInUSD_toPriceInGBP() throws Exception {
         final Money price = new Money(new BigDecimal("1.00"), USD);
-        final Money convertedPrice = uut.convertForInvoice(price, GBP);
+        final Money convertedPrice = uut.convertToPrice(price, GBP);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("0.77"), GBP));
     }
 
@@ -173,7 +173,7 @@ public class CurrencyConverterTest {
 
     @Test
     public void failsOnUnknownExchangeRates() throws Exception {
-        assertThatThrownBy(() ->uut.convertForInvoice(EUR_RATE, BRL))
+        assertThatThrownBy(() ->uut.convertToPrice(EUR_RATE, BRL))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -185,9 +185,9 @@ public class CurrencyConverterTest {
                 new ExchangeRate(EUR_RATE, HUF_RATE),
                 new ExchangeRate(usdBase, usdBase),
                 new ExchangeRate(usdBase, GBP_RATE)));
-        assertThatThrownBy(() ->uut.convertForInvoice(EUR_RATE, GBP))
+        assertThatThrownBy(() ->uut.convertToPrice(EUR_RATE, GBP))
         .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() ->uut.convertForInvoice(GBP_RATE, EUR))
+        assertThatThrownBy(() ->uut.convertToPrice(GBP_RATE, EUR))
         .isInstanceOf(IllegalArgumentException.class);
     }
 }

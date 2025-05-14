@@ -34,7 +34,7 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money moneyExchange_highPrecision() {
         final Money price = new Money(new BigDecimal("3.12345"), ConvertableCurrency.GBP);
-        final Money convertedPrice = moneyExchange.convertForInvoice(price, ConvertableCurrency.USD);
+        final Money convertedPrice = moneyExchange.convertToPrice(price, ConvertableCurrency.USD);
         return convertedPrice;
     }
     @Benchmark
@@ -54,7 +54,7 @@ public class CurrencyConverterBenchmark {
     @Benchmark
     public Money moneyExchange_lowPrecision() {
         final Money price = new Money(new BigDecimal("3.12"), ConvertableCurrency.EUR);
-        final Money convertedPrice = moneyExchange.convertForInvoice(price, ConvertableCurrency.USD);
+        final Money convertedPrice = moneyExchange.convertToPrice(price, ConvertableCurrency.USD);
         return convertedPrice;
     }
 
