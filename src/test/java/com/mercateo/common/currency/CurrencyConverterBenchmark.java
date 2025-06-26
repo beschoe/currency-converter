@@ -20,7 +20,7 @@ public class CurrencyConverterBenchmark {
     private static final Money HUF_RATE = new Money(new BigDecimal("400"), ConvertableCurrency.HUF);
     private static final Money USD_RATE = new Money(new BigDecimal("1.09"), ConvertableCurrency.USD);
     private static final Money GBP_RATE = new Money(new BigDecimal("0.84"), ConvertableCurrency.GBP);
-    private static final FixedRatesCurrencyConverter moneyExchange = new FixedRatesCurrencyConverter(asList(
+    private static final FrozenCurrencyConverter moneyExchange = new FrozenCurrencyConverter(asList(
             new ExchangeRate(EUR_RATE, EUR_RATE), new ExchangeRate(EUR_RATE, HUF_RATE),
             new ExchangeRate(EUR_RATE, GBP_RATE), new ExchangeRate(EUR_RATE, USD_RATE)));
     private static final BigDecimal RATE_VALUE_GBP_TO_USD = new BigDecimal("1.297619058");

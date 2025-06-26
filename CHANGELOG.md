@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **CurrencyConverter Interface**: Extracted interface from existing implementation for better abstraction
+- **FrozenCurrencyConverter**: Renamed original implementation having the immutable rates
 - **UpdateableCurrencyConverter**: New implementation that avoids propagating providers
 - **Money Comparable Interface**: Money class now implements Comparable for sorting and comparison operations
 - **Comprehensive Unit Tests**: Added unit tests for Money comparison logic and UpdateableCurrencyConverter

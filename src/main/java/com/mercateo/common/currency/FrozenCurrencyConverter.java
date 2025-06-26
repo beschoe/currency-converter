@@ -19,7 +19,7 @@ import com.mercateo.common.util.annotations.NonNull;
  * to convert between any supported currencies. It requires all exchange
  * rates to be specified relative to a common base currency.
  */
-public class FixedRatesCurrencyConverter implements CurrencyConverter {
+public class FrozenCurrencyConverter implements CurrencyConverter {
     private final EnumMap<ConvertableCurrency, ExchangeRate> directRates;
     private final EnumMap<ConvertableCurrency, EnumMap<ConvertableCurrency, ExchangeRate>> rates;
 
@@ -28,7 +28,7 @@ public class FixedRatesCurrencyConverter implements CurrencyConverter {
      *
      * @throws IllegalStateException if duplicate exchange rates are provided
      */
-    public FixedRatesCurrencyConverter(Collection<ExchangeRate> rateCollection) throws IllegalStateException {
+    public FrozenCurrencyConverter(Collection<ExchangeRate> rateCollection) throws IllegalStateException {
         super();
         this.directRates = new EnumMap<>(ConvertableCurrency.class);
         rateCollection.forEach(rate -> directRates.put(rate.getQuoteCurrency(),  rate));
