@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class CurrencyConverterTest {
+public class FrozenCurrencyConverterTest {
     private static final Money EUR_RATE = new Money(BigDecimal.ONE, EUR);
     private static final Money HUF_RATE = new Money(new BigDecimal("400"), HUF);
     private static final Money USD_RATE = new Money(new BigDecimal("1.09"), USD);
@@ -33,7 +33,7 @@ public class CurrencyConverterTest {
             new ExchangeRate(EUR_RATE, GBP_RATE),
             new ExchangeRate(EUR_RATE, USD_RATE),
             new ExchangeRate(EUR_RATE, DEM_RATE));
-    private static final CurrencyConverter uut = new CurrencyConverter(rates);
+    private static final FrozenCurrencyConverter uut = new FrozenCurrencyConverter(rates);
 
     @Test
     public void convertPriceInEUR_toPriceInHUF_forInvoice() throws Exception {
@@ -156,7 +156,7 @@ public class CurrencyConverterTest {
 
     @Test
     public void ignoresRepeatedExchangeRatesInConstructor() throws Exception {
-        CurrencyConverter uut = new CurrencyConverter(asList(
+        FrozenCurrencyConverter uut = new FrozenCurrencyConverter(asList(
                 new ExchangeRate(EUR_RATE, EUR_RATE),
                 new ExchangeRate(EUR_RATE, HUF_RATE),
                 new ExchangeRate(EUR_RATE, HUF_RATE)));
@@ -165,7 +165,7 @@ public class CurrencyConverterTest {
 
     @Test
     public void failsOnInconsistentExchangeRatesInConstructor() throws Exception {
-        assertThatThrownBy(() ->new CurrencyConverter(asList(
+        assertThatThrownBy(() ->new FrozenCurrencyConverter(asList(
                 new ExchangeRate(EUR_RATE, new Money(new BigDecimal("400"), HUF)),
                 new ExchangeRate(EUR_RATE, new Money(new BigDecimal("500"), HUF)))))
         .isInstanceOf(IllegalStateException.class);
@@ -180,7 +180,7 @@ public class CurrencyConverterTest {
     @Test
     public void failsExchangeRatesFromDifferentClusters() throws Exception {
         Money usdBase = new Money(BigDecimal.ONE, USD);
-        CurrencyConverter uut = new CurrencyConverter(asList(
+        FrozenCurrencyConverter uut = new FrozenCurrencyConverter(asList(
                 new ExchangeRate(EUR_RATE, EUR_RATE),
                 new ExchangeRate(EUR_RATE, HUF_RATE),
                 new ExchangeRate(usdBase, usdBase),

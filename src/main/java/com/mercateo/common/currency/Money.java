@@ -16,7 +16,7 @@ import com.mercateo.common.util.annotations.Nullable;
  * This class handles precise monetary calculations and can be converted
  * to different currencies when combined with appropriate exchange rates.
  */
-public class Money {
+public class Money implements Comparable<Money>{
     private final BigDecimal amount;
     private final ConvertableCurrency currency;
 
@@ -68,6 +68,21 @@ public class Money {
     @Override
     public String toString() {
         return "Money [amount=" + amount + ", currency=" + currency + "]";
+    }
+
+    /**
+     * Compares this Money object with another Money object for order.
+     * 
+     * @param o the Money object to be compared
+     * @return a negative integer, zero, or a positive integer as this Money
+     *         is less than, equal to, or greater than the specified Money
+     * @throws IllegalArgumentException if the currencies are different
+     */
+    @Override
+    public int compareTo(Money o) {
+        if(currency != o.currency)
+            throw new IllegalArgumentException("Can't compare monetary values with different currencies " + currency + " and " + o.currency);
+        return amount.compareTo(o.amount);
     }
 
 
