@@ -16,8 +16,8 @@ import java.math.RoundingMode;
 public interface CurrencyConverter {
 
     /**
-     * Converts a monetary amount using invoice-specific decimal places.
-     * Specifically designed for invoice calculations where special decimal place rules apply.
+     * Converts a monetary amount using currency-specific decimal places.
+     * Specifically designed for price calculations where special decimal place rules apply.
      *
      * @throws IllegalArgumentException if an exchange rate for either currency is not found
      */

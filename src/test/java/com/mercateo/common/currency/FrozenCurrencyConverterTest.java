@@ -36,14 +36,14 @@ public class FrozenCurrencyConverterTest {
     private static final FrozenCurrencyConverter uut = new FrozenCurrencyConverter(rates);
 
     @Test
-    public void convertPriceInEUR_toPriceInHUF_forInvoice() throws Exception {
+    public void convertPriceInEUR_toPriceInHUF() throws Exception {
         final Money price = new Money(new BigDecimal("1.010101"),EUR);
         final Money convertedPrice = uut.convertToPrice(price,HUF);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("405"),HUF));
     }
 
     @Test
-    public void convertPriceInEUR_toPriceInHUF_forCalculations() throws Exception {
+    public void convertPriceInEUR_toPriceInHUF_proportionally() throws Exception {
         final Money price = new Money(new BigDecimal("1.010101"),EUR);
         final Money convertedPrice = uut.convertProportionally(price,HUF);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("404.0404"),HUF));
@@ -57,7 +57,7 @@ public class FrozenCurrencyConverterTest {
     }
 
     @Test
-    public void convertHighPrecisionPriceInEUR_toPriceInHUF() throws Exception {
+    public void convertHighPrecisionPriceInEUR_toPriceInHUF_proportionally() throws Exception {
         final Money price = new Money(new BigDecimal("1.0000"),EUR);
         final Money convertedPrice = uut.convertProportionally(price,HUF);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("400.00"),HUF));
@@ -78,7 +78,7 @@ public class FrozenCurrencyConverterTest {
     }
 
     @Test
-    public void convertPriceInUSD_toPriceInUSD_withDecimalPlacesForInfoice() throws Exception {
+    public void convertPriceInUSD_toPriceInUSD_withDecimalPlacesForPrice() throws Exception {
         final Money price = new Money(new BigDecimal("1.0101"),USD);
         final Money convertedPrice = uut.convertToPrice(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("1.01"), USD));
@@ -93,14 +93,14 @@ public class FrozenCurrencyConverterTest {
     }
 
     @Test
-    public void convertHighPrecisionPriceInGBP_toPriceInUSD_forInvoice() throws Exception {
+    public void convertHighPrecisionPriceInGBP_toPriceInUSD() throws Exception {
         final Money price = new Money(new BigDecimal("3.12345"), GBP);
         final Money convertedPrice = uut.convertToPrice(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("4.05"), USD));
     }
 
     @Test
-    public void convertHighPrecisionPriceInGBP_toPriceInUSD() throws Exception {
+    public void convertHighPrecisionPriceInGBP_toPriceInUSD_proportionally() throws Exception {
         final Money price = new Money(new BigDecimal("3.12345"), GBP);
         final Money convertedPrice = uut.convertProportionally(price, USD);
         assertThat(convertedPrice).isEqualTo(new Money(new BigDecimal("4.05305"), USD));
