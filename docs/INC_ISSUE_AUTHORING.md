@@ -30,7 +30,7 @@ Produce a finalized Increment Issue Description, and submit it in markdown forma
 
 ## 5. Execution Sequence
 1. Parse the user request to find increment number (part of increment label) and, if provided, a stated goal and stated constraints.
-2. Extract enriching information from `docs/ROADMAP.md`: Look up the increment number (part of increment label) in that document and retrieve information about goal, context etc. 
+2. Write a new section for that issue as "INC-xx" into `docs/ROADMAP.md` , with a short description of assumed goal (follow the title format of earlier issues in `docs/ROADMAP.md`, and order in rising increment numbers)
 3. Execute an explicit and thorough online research for each of the following topics to retrieve up-to-date information on relevant questions: a) concerning architectural design patterns b) concerning relevant technological advances and best practices c) concerning most up-to-date versions of dependencies / APIs etc.
 4. Produce concise Clarification Summary and submit it for user review (save in directory ./issues under filename pattern inc-<n>-clarifications.md), see section 6 "Clarification Question Guidelines" for details about this document
 5. Hard stop to wait for approval from this user review. Do not execute any further activities while waiting for review approval.
