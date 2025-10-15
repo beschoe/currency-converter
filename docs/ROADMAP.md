@@ -36,6 +36,8 @@ See issues/INC-1-GithubAgentReadiness.md for details.
 ## INC-2: No-op CI trigger via README whitespace (Status: In Progress)
 Goal: Create a minimal, no-functional-change modification (whitespace adjustment in README.md) to exercise the GitHub Coding Agent workflow and CI pipeline end-to-end without impacting library behavior.
 
+**Status updated**: 2025-10-15 - In Progress (implementation started)
+
 Short scope note:
 - Add a single harmless whitespace-only change to `README.md` to trigger CI and validate the reusable setup workflow integration.
 - No code or behavior changes in the Java library.
