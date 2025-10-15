@@ -1,0 +1,50 @@
+name: Copilot/Coding Agent Setup Steps
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        description: Java version to install (SemVer or major)
+        type: string
+        default: '21'
+      run:
+        description: Optional shell command to run after setup (e.g., './mvnw -B -ntp clean test')
+        type: string
+        default: ''
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ inputs.java-version }} (Temurin) with Maven cache
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: ${{ inputs.java-version }}
+          cache: 'maven'
+
+      - name: Ensure mvnw is executable
+        run: |
+          if [ -f ./mvnw ]; then chmod +x ./mvnw; fi
+
+      - name: Print tool versions
+        run: |
+          ./mvnw -v || true
+          java -version || true
+          echo "Runner: $RUNNER_OS / $(uname -a)"
+
+      - name: Optional custom command
+        if: ${{ inputs.run != '' }}
+        run: ${{ inputs.run }}
+
+# How to call this reusable workflow from the same repo:
+#
+# jobs:
+#   build:
+#     uses: ./.github/workflows/copilot-setup-steps.yml
+#     with:
+#       java-version: '17'
+#       run: './mvnw -B -ntp clean test'
