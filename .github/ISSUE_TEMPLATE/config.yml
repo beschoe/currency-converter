@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Increment Issue (INC-<n>)
+    url: https://github.com/beschoe/currency-converter/issues/new?template=increment-issue.md
+    about: Use the Increment issue template for changes. See docs/INC_ISSUE_AUTHORING.md first.

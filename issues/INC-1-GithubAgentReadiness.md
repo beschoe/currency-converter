@@ -46,8 +46,8 @@ Assumptions:
 ### C) Essential context files (keep focused; avoid overengineering)
 - [ ] C1. Review `.github/copilot-instructions.md` for any drift; reference the new reusable workflow by name and purpose (no duplication)
 - [ ] C2. Ensure `CONTRIBUTING.md` points to guardrails and shows `./mvnw -B -ntp` usage (already in place); keep scope lean
-- [ ] C3. Add `.github/ISSUE_TEMPLATE/config.yml` to default to the Increment template, do not disable blank issues (for demo degrees of freedom)
-- [ ] C4. Optional: Add `CODEOWNERS` to auto-assign review for agent PRs (keeps human loop fast); keep simple (e.g., `* @repo-owner`) --> user answer: Skip this, free manual assigment of PRs
+- [ ] C3. Add `.github/ISSUE_TEMPLATE/config.yml` to default to the Increment template; keep blank issues ENABLED (per demo flexibility)
+- [ ] C4. Optional: Add `CODEOWNERS` to auto-assign review for agent PRs (keeps human loop fast); keep simple (e.g., `* @repo-owner`). If undesired, skip and use manual assignment (current preference).
 - [ ] C5. Optional: Add a CI badge to `README.md` for quick status visibility during demo
 
 ### D) Validation & Demo Readiness

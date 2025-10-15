@@ -75,6 +75,13 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 ./mvnw -B -ntp install
 ```
 
+### Reusable setup workflow (for CI and Agent callers)
+- A reusable setup workflow is provided at `./.github/workflows/copilot-setup-steps.yml`.
+- It installs Temurin JDK (input: `java-version`), enables Maven cache, ensures the wrapper is executable, prints tool versions, and can run an optional command via `inputs.run`.
+- Example caller with matrix:
+    - File: `./.github/workflows/ci.yml`
+    - Calls the reusable workflow for Java 17 and 21 and runs `./mvnw -B -ntp clean test`.
+
 ### Dependencies
 - Jackson 2.15.2 (core, databind, annotations)
 - Lombok 1.18.28 (scope: provided)
