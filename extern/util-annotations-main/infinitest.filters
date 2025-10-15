@@ -1,0 +1,8 @@
+.*[^0]Test$
+.*Tests$
+.*IT$
+.*PT$
+.*UT$
+.*AT$
+.*TestBase$
+

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: common.util.annotations
+Bundle-SymbolicName: common.util.annotations
+Bundle-Version: 1.12.0
+Export-Package: com.mercateo.common.util.annotations
+Automatic-Module-Name: common.util.annotations
