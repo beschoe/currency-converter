@@ -33,7 +33,7 @@ Goal: Provide an optimally instrumented sandbox and repository context so the Gi
 See issues/INC-1-GithubAgentReadiness.md for details.
 
 ---
-## INC-2: No-op CI trigger via README whitespace (Status: Planned)
+## INC-2: No-op CI trigger via README whitespace (Status: In Progress)
 Goal: Create a minimal, no-functional-change modification (whitespace adjustment in README.md) to exercise the GitHub Coding Agent workflow and CI pipeline end-to-end without impacting library behavior.
 
 Short scope note:
