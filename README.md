@@ -1,5 +1,7 @@
 # Currency Converter
 
+![CI](https://github.com/beschoe/currency-converter/actions/workflows/ci.yml/badge.svg)
+
 A self-contained Java library for precise currency conversion in European B2B marketplace platforms. This library provides robust monetary calculations, exchange rate management, and JSON serialization support for internal systems requiring accurate daily currency conversion data.
 
 ## Features
@@ -191,3 +193,4 @@ See documentation contained in the [release-chain](https://gitlab.build-unite.un
 ## License
 
 Internal Mercateo library - proprietary usage only.
+
