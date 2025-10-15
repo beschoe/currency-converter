@@ -1,32 +1,46 @@
-name: Copilot/Coding Agent Setup Steps
+name: "Copilot Setup Steps"
 
 on:
+  # Allow Copilot to detect and run this job before a session; also allow easy validation
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  # Keep reusable mode so other workflows can call these steps with inputs, if desired
   workflow_call:
     inputs:
       java-version:
         description: Java version to install (SemVer or major)
         type: string
-        default: '21'
+        default: '17'
       run:
         description: Optional shell command to run after setup (e.g., './mvnw -B -ntp clean test')
         type: string
         default: ''
 
 jobs:
-  setup:
+  # The job MUST be named exactly 'copilot-setup-steps' for Copilot coding agent to pick it up.
+  copilot-setup-steps:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-      - name: Set up Java ${{ inputs.java-version }} (Temurin) with Maven cache
+      - name: Set up Java (Temurin) with Maven cache
         uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: ${{ inputs.java-version }}
-          cache: 'maven'
+          distribution: temurin
+          # Use input when called as a reusable workflow; default to 17 for Copilot session runs
+          java-version: ${{ inputs.java-version || '17' }}
+          cache: maven
 
-      - name: Ensure mvnw is executable
+      - name: Ensure Maven Wrapper is executable
         run: |
           if [ -f ./mvnw ]; then chmod +x ./mvnw; fi
 
@@ -36,15 +50,14 @@ jobs:
           java -version || true
           echo "Runner: $RUNNER_OS / $(uname -a)"
 
-      - name: Optional custom command
-        if: ${{ inputs.run != '' }}
-        run: ${{ inputs.run }}
+      - name: Pre-warm Maven local repository (dependencies & plugins)
+        shell: bash
+        run: |
+          if [ -f ./mvnw ]; then
+            ./mvnw -B -ntp -q -DskipTests dependency:go-offline || true
+          fi
 
-# How to call this reusable workflow from the same repo:
-#
-# jobs:
-#   build:
-#     uses: ./.github/workflows/copilot-setup-steps.yml
-#     with:
-#       java-version: '17'
-#       run: './mvnw -B -ntp clean test'
+      - name: Optional custom command from caller
+        # Only attempt to use inputs.run when this workflow is invoked via workflow_call
+        if: ${{ github.event_name == 'workflow_call' && inputs.run != '' }}
+        run: ${{ inputs.run }}
