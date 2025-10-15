@@ -8,11 +8,30 @@ on:
 
 jobs:
   build:
-    uses: beschoe/currency-converter/.github/workflows/copilot-setup-steps.yml@main
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         java: [ '17', '21' ]
-    with:
-      java-version: ${{ matrix.java }}
-      run: './mvnw -B -ntp clean test'
-    secrets: inherit
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ matrix.java }} (Temurin) with Maven cache
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+          cache: 'maven'
+
+      - name: Ensure mvnw is executable
+        run: |
+          if [ -f ./mvnw ]; then chmod +x ./mvnw; fi
+
+      - name: Print tool versions
+        run: |
+          ./mvnw -v || true
+          java -version || true
+          echo "Runner: $RUNNER_OS / $(uname -a)"
+
+      - name: Build and Test
+        run: ./mvnw -B -ntp clean test
