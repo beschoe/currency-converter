@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/copilot-setup-steps.yml
+    uses: beschoe/currency-converter/.github/workflows/copilot-setup-steps.yml@main
     strategy:
       matrix:
         java: [ '17', '21' ]
