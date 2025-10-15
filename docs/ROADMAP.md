@@ -17,7 +17,20 @@ Change policy:
 
 ---
 ## INC-0: Make code compile and tests green in isolated local repo (Status: Planned)
-Goal: Adapt fresh local repo configuration to make this isolated code setup compile and tests green
+Goal: Make this repository compile and run tests locally with no access to Mercateo’s internal artifact ecosystem, so future changes by humans and AI agents build reliably on any clean machine.
+
+## Scope
+- In scope (Milestone INC-0): Local build and test green (no network access to private repos required).
+- Out of scope (later milestones): GitHub Actions / Coding Agent CI workflows, additional Copilot prompts, publishing artifacts.
+
+See issues/INC-0-Setup.md for details.
+
+---
+# INC-1: GitHub Coding Agent Readiness
+
+Goal: Provide an optimally instrumented sandbox and repository context so the GitHub Coding Agent can work quickly and reliably (demo-friendly, zero trial-and-error on setup).
+
+See issues/INC-1-GithubAgentReadiness.md for details.
 
 ---
 ## Future (Unscheduled Fragments)
