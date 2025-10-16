@@ -92,6 +92,30 @@ public class ExchangeRate {
         return new ExchangeRate(denominator.quoteValue, quoteValue);
     }
 
+    /**
+     * Composes this exchange rate with another to create a synthetic rate.
+     * This rate's quote currency must match the other rate's base currency.
+     * The resulting rate converts from this rate's base to the other rate's quote.
+     * 
+     * Example: EUR->USD composed with USD->GBP yields EUR->GBP
+     */
+    ExchangeRate compose(ExchangeRate next) {
+        if (!this.getQuoteCurrency().equals(next.getBaseCurrency())) {
+            throw new IllegalArgumentException(
+                "Cannot compose rates: quote currency " + this.getQuoteCurrency() + 
+                " does not match base currency " + next.getBaseCurrency());
+        }
+        // Multiply the rate values to get the composed rate
+        Money thisRate = this.getRateValue();
+        Money nextRate = next.getRateValue();
+        BigDecimal composedRate = thisRate.getAmount().multiply(nextRate.getAmount());
+        
+        // Create normalized base and quote (base amount = 1.0)
+        Money normalizedBase = new Money(BigDecimal.ONE, this.getBaseCurrency());
+        Money composedQuote = new Money(composedRate, next.getQuoteCurrency());
+        return new ExchangeRate(normalizedBase, composedQuote);
+    }
+
     @Override
     public String toString() {
         return "ExchangeRate [1 " + getBaseCurrency() + " -> " + getRateValue().getAmount() + " " + getQuoteCurrency() + "]";

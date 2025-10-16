@@ -6,45 +6,59 @@
 package com.mercateo.common.currency;
 
 import java.math.RoundingMode;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.function.Function;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Queue;
 
 import com.mercateo.common.util.annotations.NonNull;
+import com.mercateo.common.util.annotations.Nullable;
 
 /**
  * Handles conversion of monetary amounts between different currencies.
  *
  * This class manages a collection of exchange rates and provides methods
- * to convert between any supported currencies. It requires all exchange
- * rates to be specified relative to a common base currency.
+ * to convert between any supported currencies. It supports arbitrary currency
+ * pairs and can compute synthetic cross-rates on demand by finding the shortest
+ * path through available exchange rates.
  */
 public class FrozenCurrencyConverter implements CurrencyConverter {
-    private final EnumMap<ConvertableCurrency, ExchangeRate> directRates;
-    private final EnumMap<ConvertableCurrency, EnumMap<ConvertableCurrency, ExchangeRate>> rates;
+    private static final int MAX_HOPS = 4;
+    
+    private final EnumMap<ConvertableCurrency, EnumMap<ConvertableCurrency, ExchangeRate>> directRates;
+    private final EnumMap<ConvertableCurrency, EnumMap<ConvertableCurrency, ExchangeRate>> cachedRates;
 
     /**
      * Creates a new currency converter with the specified exchange rates.
+     * Supports arbitrary currency pairs without requiring a common base currency.
      *
      * @throws IllegalStateException if duplicate exchange rates are provided
      */
     public FrozenCurrencyConverter(Collection<ExchangeRate> rateCollection) throws IllegalStateException {
         super();
         this.directRates = new EnumMap<>(ConvertableCurrency.class);
-        rateCollection.forEach(rate -> directRates.put(rate.getQuoteCurrency(),  rate));
-        this.rates = new EnumMap<>(ConvertableCurrency.class);
+        this.cachedRates = new EnumMap<>(ConvertableCurrency.class);
+        
+        // Store all direct rates and their inverses
         rateCollection.forEach(this::addExchangeRate);
-        rateCollection.stream().map(ExchangeRate::invert)
-        .forEach(rate -> computeExchangeRateIfAbsent(rate.getBaseCurrency(), rate.getQuoteCurrency(), x -> rate));
+        rateCollection.stream()
+            .map(ExchangeRate::invert)
+            .forEach(this::addExchangeRate);
     }
-
 
     @SuppressWarnings("null")
     private void addExchangeRate(@NonNull ExchangeRate rate) {
-        ExchangeRate knownRate = rates.computeIfAbsent(rate.getBaseCurrency(), x -> new EnumMap<>(ConvertableCurrency.class))
-                .put(rate.getQuoteCurrency(),  rate);
-        if(knownRate != null && ! knownRate.equals(rate))
+        EnumMap<ConvertableCurrency, ExchangeRate> fromMap = 
+            directRates.computeIfAbsent(rate.getBaseCurrency(), x -> new EnumMap<>(ConvertableCurrency.class));
+        
+        ExchangeRate knownRate = fromMap.get(rate.getQuoteCurrency());
+        if (knownRate != null && !knownRate.equals(rate)) {
             throw new IllegalStateException("conflicting rates " + rate + " and " + knownRate);
+        }
+        fromMap.put(rate.getQuoteCurrency(), rate);
     }
 
 
@@ -85,30 +99,138 @@ public class FrozenCurrencyConverter implements CurrencyConverter {
      */
     @Override
     public ExchangeRate getExchangeRate(ConvertableCurrency fromCurrency, ConvertableCurrency toCurrency) throws IllegalArgumentException {
-        return computeExchangeRateIfAbsent(fromCurrency, toCurrency,
-                fromCurrency == toCurrency ? ExchangeRate::identity : x -> calculateDerivedRate(fromCurrency, toCurrency));
+        // Same currency - return identity
+        if (fromCurrency == toCurrency) {
+            return ExchangeRate.identity(fromCurrency);
+        }
+        
+        // Check cached rates first
+        ExchangeRate cached = getCachedRate(fromCurrency, toCurrency);
+        if (cached != null) {
+            return cached;
+        }
+        
+        // Try direct rate
+        ExchangeRate direct = getDirectRate(fromCurrency, toCurrency);
+        if (direct != null) {
+            cacheRate(fromCurrency, toCurrency, direct);
+            return direct;
+        }
+        
+        // Try synthetic path
+        ExchangeRate synthetic = findShortestPath(fromCurrency, toCurrency);
+        if (synthetic != null) {
+            cacheRate(fromCurrency, toCurrency, synthetic);
+            return synthetic;
+        }
+        
+        throw new IllegalArgumentException("No exchange rate path found from " + fromCurrency + " to " + toCurrency);
     }
 
-    @SuppressWarnings("null")
-    private ExchangeRate calculateDerivedRate(ConvertableCurrency fromCurrency, ConvertableCurrency toCurrency) {
-        ExchangeRate knownRate = directRates.get(toCurrency);
-        if(knownRate == null)
-            throw new IllegalArgumentException("Unknown Currency " + toCurrency);
-        ExchangeRate newBaseRate = directRates.get(fromCurrency);
-        if(newBaseRate == null)
-            throw new IllegalArgumentException("Unknown Currency " + fromCurrency);
-        return knownRate.withBase(newBaseRate);
+    @Nullable
+    private ExchangeRate getCachedRate(ConvertableCurrency from, ConvertableCurrency to) {
+        EnumMap<ConvertableCurrency, ExchangeRate> fromMap = cachedRates.get(from);
+        return fromMap != null ? fromMap.get(to) : null;
     }
 
+    private void cacheRate(ConvertableCurrency from, ConvertableCurrency to, ExchangeRate rate) {
+        cachedRates.computeIfAbsent(from, x -> new EnumMap<>(ConvertableCurrency.class))
+            .put(to, rate);
+    }
 
-    private ExchangeRate computeExchangeRateIfAbsent(ConvertableCurrency fromCurrency,
-            ConvertableCurrency toCurrency, Function<ConvertableCurrency, ExchangeRate> rateCalculator) {
-        return rates.computeIfAbsent(fromCurrency, x -> new EnumMap<>(ConvertableCurrency.class))
-        .computeIfAbsent(toCurrency, rateCalculator);
+    @Nullable
+    private ExchangeRate getDirectRate(ConvertableCurrency from, ConvertableCurrency to) {
+        EnumMap<ConvertableCurrency, ExchangeRate> fromMap = directRates.get(from);
+        return fromMap != null ? fromMap.get(to) : null;
+    }
+
+    /**
+     * Finds the shortest path between two currencies using BFS.
+     * Returns null if no path exists within the hop limit.
+     */
+    @Nullable
+    private ExchangeRate findShortestPath(ConvertableCurrency from, ConvertableCurrency to) {
+        Queue<PathNode> queue = new ArrayDeque<>();
+        EnumSet<ConvertableCurrency> visited = EnumSet.of(from);
+        queue.add(new PathNode(from, null, null, 0));
+        
+        while (!queue.isEmpty()) {
+            PathNode current = queue.poll();
+            
+            // Check if we've exceeded hop limit
+            if (current.hops >= MAX_HOPS) {
+                continue;
+            }
+            
+            // Get all neighbors (currencies we can convert to)
+            EnumMap<ConvertableCurrency, ExchangeRate> neighbors = directRates.get(current.currency);
+            if (neighbors == null) {
+                continue;
+            }
+            
+            // Process neighbors in deterministic order (enum natural order)
+            for (ConvertableCurrency neighbor : ConvertableCurrency.values()) {
+                ExchangeRate rate = neighbors.get(neighbor);
+                if (rate == null) {
+                    continue;
+                }
+                
+                // Found target
+                if (neighbor == to) {
+                    return reconstructRate(current, rate);
+                }
+                
+                // Add to queue if not visited
+                if (!visited.contains(neighbor)) {
+                    visited.add(neighbor);
+                    queue.add(new PathNode(neighbor, current, rate, current.hops + 1));
+                }
+            }
+        }
+        
+        return null;
+    }
+
+    private ExchangeRate reconstructRate(PathNode node, ExchangeRate finalRate) {
+        List<ExchangeRate> path = new ArrayList<>();
+        
+        // Collect rates in reverse order
+        path.add(finalRate);
+        PathNode current = node;
+        while (current.previousRate != null) {
+            path.add(current.previousRate);
+            current = current.previous;
+        }
+        
+        // Compose rates in correct order (from end to start)
+        ExchangeRate result = path.get(path.size() - 1);
+        for (int i = path.size() - 2; i >= 0; i--) {
+            result = result.compose(path.get(i));
+        }
+        
+        return result;
+    }
+
+    /**
+     * Helper class for BFS pathfinding
+     */
+    private static class PathNode {
+        final ConvertableCurrency currency;
+        final @Nullable PathNode previous;
+        final @Nullable ExchangeRate previousRate;
+        final int hops;
+        
+        PathNode(ConvertableCurrency currency, @Nullable PathNode previous, 
+                @Nullable ExchangeRate previousRate, int hops) {
+            this.currency = currency;
+            this.previous = previous;
+            this.previousRate = previousRate;
+            this.hops = hops;
+        }
     }
 
     @Override
     public String toString() {
-        return "MoneyExchange [rates=" + directRates + "]";
+        return "FrozenCurrencyConverter [directRates=" + directRates + "]";
     }
 }

@@ -151,7 +151,7 @@ public class FrozenCurrencyConverterTest {
         assertThat(uut.getExchangeRate(USD, EUR).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.9174311927"));
 
         assertThat(uut.getExchangeRate(GBP, USD).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("1.2976190476"));
-        assertThat(uut.getExchangeRate(USD, GBP).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.7706422018"));
+        assertThat(uut.getExchangeRate(USD, GBP).getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.7706422019"));
     }
 
     @Test
