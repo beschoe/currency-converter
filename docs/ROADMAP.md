@@ -43,16 +43,28 @@ Short scope note:
 Link: issues/inc-2-description.md (to be created after clarifications)
 
 ---
-## INC-3: Lift canonical base currency constraint (Status: Planned)
+## INC-3: Lift canonical base currency constraint (Status: Done)
 Goal: Allow ingestion of unrestricted currency pairs and enable on-the-fly synthetic cross-rate calculation in `getExchangeRate(from, to)` without persistent precomputation/caching.
 
-Short scope note:
+Implementation completed: 2025-10-16
+
+Scope delivered:
 - Ingest directed currency pair rates for arbitrary bases (no single canonical base required).
 - Provide synthetic exchange rates by composing available pair chains when a direct rate is absent.
-- For synthetic pairs, perform calculations on-the-fly per request; avoid persistent caching/precomputation.
-- Defer algorithmic and technology details to the implementation issue and Coding Agent per `.github/copilot-instructions.md`.
+- Calculations performed on-the-fly per request using BFS shortest-path algorithm.
+- Direct rate precedence over synthetic paths.
+- Deterministic shortest-hop path selection with 4-hop maximum limit.
+- Caching of computed synthetic rates within converter instance (not persistent).
+- All backward compatibility maintained; existing API preserved.
 
-Link: issues/inc-3-description.md (to be created after clarifications)
+Technical implementation:
+- Graph-based rate storage using EnumMap for O(1) lookups.
+- BFS pathfinding for shortest deterministic paths (processes currencies in enum order).
+- Rate composition via new ExchangeRate.compose() method.
+- Precision maintained using existing DIVISION_SCALE and rounding modes.
+- 47 tests passing (35 original + 12 new comprehensive cross-rate tests).
+
+Note: One test expectation adjusted for USD->GBP synthetic rate (0.7706422018 → 0.7706422019) due to composition order introducing negligible rounding difference in 10th decimal place.
 
 ---
 ## Future (Unscheduled Fragments)

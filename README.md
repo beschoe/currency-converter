@@ -9,7 +9,8 @@ A self-contained Java library for precise currency conversion in European B2B ma
 The `com.mercateo.common.currency` package provides a comprehensive currency conversion system that allows for:
 
 - Converting monetary amounts between different currencies with BigDecimal precision
-- Managing exchange rates between multiple currencies with automatic rate derivation
+- Managing exchange rates with unrestricted currency pairs (no single canonical base required)
+- Automatic synthetic cross-rate calculation through shortest-path composition (up to 4 hops)
 - Handling proper decimal scaling and rounding according to currency-specific requirements
 - Supporting daily or more frequent exchange rate updates through immutable and updateable converters
 - Thread-safe currency conversion operations
@@ -53,9 +54,9 @@ String json = mapper.writeValueAsString(money);
 
 - **Money**: Immutable monetary value with BigDecimal amount and currency
 - **ConvertableCurrency**: Enum of supported ISO 4217 currencies with default scales and rounding
-- **ExchangeRate**: Represents conversion rates between two currencies with lazy calculation
+- **ExchangeRate**: Represents conversion rates between two currencies with lazy calculation and composition
 - **CurrencyConverter**: Interface for all currency conversion operations
-- **FrozenCurrencyConverter**: Immutable implementation with fixed exchange rates
+- **FrozenCurrencyConverter**: Immutable implementation supporting arbitrary currency pairs with automatic cross-rate synthesis
 - **UpdateableCurrencyConverter**: Thread-safe wrapper allowing runtime rate updates
 - **DecimalPlacesStrategy**: Precision strategies (TO_PRICE for invoices, PROPORTIONAL for calculations)
 
@@ -131,6 +132,26 @@ ExchangeRate rate = converter.getExchangeRate(EUR, USD);
 
 // Manual conversion using exchange rate
 Money converted = rate.convert(money, DecimalPlacesStrategy.PROPORTIONAL, RoundingMode.HALF_EVEN);
+```
+
+### Cross-Rate Conversion
+
+```java
+// Unrestricted currency pairs - no canonical base required
+Money usdBase = new Money(BigDecimal.ONE, USD);
+Money eurFromUsd = new Money(new BigDecimal("0.92"), EUR);
+Money gbpBase = new Money(BigDecimal.ONE, GBP);
+Money eurFromGbp = new Money(new BigDecimal("1.17"), EUR);
+
+FrozenCurrencyConverter converter = new FrozenCurrencyConverter(Arrays.asList(
+    new ExchangeRate(usdBase, eurFromUsd),
+    new ExchangeRate(gbpBase, eurFromGbp)
+));
+
+// Automatic synthetic cross-rate USD->GBP via EUR (shortest path, max 4 hops)
+Money usdAmount = new Money(new BigDecimal("100.00"), USD);
+Money gbpAmount = converter.convertToPrice(usdAmount, GBP);
+// Calculates: USD->EUR->GBP
 ```
 
 ### Runtime Updates

@@ -28,9 +28,9 @@ This is a small, self-contained Java library for currency conversion in a Europe
 
 1. **Money** - Immutable monetary value with currency and BigDecimal amount
 2. **ConvertableCurrency** - Enum of supported ISO 4217 currencies with default scales/rounding
-3. **ExchangeRate** - Represents conversion rates between two currencies
+3. **ExchangeRate** - Represents conversion rates between two currencies with composition support
 4. **CurrencyConverter** - Interface for currency conversion operations
-5. **FrozenCurrencyConverter** - Immutable implementation with fixed exchange rates
+5. **FrozenCurrencyConverter** - Immutable implementation supporting arbitrary currency pairs with synthetic cross-rate calculation
 6. **UpdateableCurrencyConverter** - Thread-safe wrapper allowing runtime rate updates
 7. **DecimalPlacesStrategy** - Enum defining precision strategies (TO_PRICE, PROPORTIONAL)
 
@@ -113,7 +113,7 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 ### Key Constraints
 - All monetary amounts use BigDecimal for precision
 - Currency conversions require proper decimal scaling
-- Exchange rates are relative to common base currency (typically EUR)
+- Exchange rates support arbitrary currency pairs (no canonical base required); synthetic cross-rates computed via shortest-path algorithm (max 4 hops)
 - JSON serialization must not expose internal `rateValue` field
 - Thread-safe updates for UpdateableCurrencyConverter
 
@@ -127,7 +127,8 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 
 ### Common Patterns
 - Use `new Money(BigDecimal, ConvertableCurrency)` for monetary values
-- Exchange rates created with base value (typically 1.0 EUR) and quote value
+- Exchange rates created with base value (typically 1.0 of base currency) and quote value
+- Converter automatically finds shortest conversion path through available rates (BFS, deterministic, max 4 hops)
 - Conversion strategies: TO_PRICE for invoices, PROPORTIONAL for calculations
 - Use EnumMap for currency-based lookups (performance optimization)
 
