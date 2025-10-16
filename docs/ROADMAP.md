@@ -43,16 +43,18 @@ Short scope note:
 Link: issues/inc-2-description.md (to be created after clarifications)
 
 ---
-## INC-3: Lift canonical base currency constraint (Status: Planned)
+## INC-3: Lift canonical base currency constraint (Status: Done)
 Goal: Allow ingestion of unrestricted currency pairs and enable on-the-fly synthetic cross-rate calculation in `getExchangeRate(from, to)` without persistent precomputation/caching.
 
-Short scope note:
-- Ingest directed currency pair rates for arbitrary bases (no single canonical base required).
-- Provide synthetic exchange rates by composing available pair chains when a direct rate is absent.
-- For synthetic pairs, perform calculations on-the-fly per request; avoid persistent caching/precomputation.
-- Defer algorithmic and technology details to the implementation issue and Coding Agent per `.github/copilot-instructions.md`.
+Implementation summary:
+- Replaced single canonical base assumption with bidirectional graph-based storage
+- Implemented BFS shortest-path algorithm with 4-hop limit for synthetic rate computation
+- Direct ingested rates take precedence over synthetic paths
+- Precision preserved using baseValue/quoteValue approach for 2-hop paths
+- All existing tests pass; 10 new comprehensive tests added
+- No JSON changes; backward compatible
 
-Link: issues/inc-3-description.md (to be created after clarifications)
+Link: PR #[number] - INC-3: Lift canonical base currency constraint
 
 ---
 ## Future (Unscheduled Fragments)

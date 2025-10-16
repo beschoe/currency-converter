@@ -212,18 +212,22 @@ public class FrozenCurrencyConverter implements CurrencyConverter {
             return path.get(0);
         }
         
-        // For paths that connect through common intermediates, we can use the original
-        // base and quote values directly, mimicking the old withBase() approach
-        // This preserves precision by avoiding unnecessary multiplications
+        // For paths that connect through common intermediates with matching base values,
+        // we can use the old withBase() approach for better precision
+        // This requires that rates share the same base amount (e.g., both "1 EUR")
         
-        Money firstBase = path.get(0).getBaseValue();
-        Money lastQuote = path.get(path.size() - 1).getQuoteValue();
-        
-        // Check if this is a simple 2-hop path where we can directly use base/quote
-        // Path like: A->B->C where B is the intermediate
-        if (path.size() == 2 && path.get(0).getQuoteCurrency() == path.get(1).getBaseCurrency()) {
-            // This is analogous to withBase: create ExchangeRate(firstBase, lastQuote)
-            return new ExchangeRate(firstBase, lastQuote);
+        // Check if this is a simple 2-hop path where we can use withBase logic
+        // Path like: A->B->C where B is the intermediate with matching base values
+        if (path.size() == 2) {
+            ExchangeRate firstRate = path.get(0);
+            ExchangeRate secondRate = path.get(1);
+            
+            // Check if they connect through a common intermediate with matching base values
+            if (firstRate.getQuoteCurrency() == secondRate.getBaseCurrency() &&
+                firstRate.getQuoteValue().equals(secondRate.getBaseValue())) {
+                // Use withBase approach: ExchangeRate(firstBase, secondQuote)
+                return new ExchangeRate(firstRate.getBaseValue(), secondRate.getQuoteValue());
+            }
         }
         
         // General case: compute composite rate by multiplying rate values
