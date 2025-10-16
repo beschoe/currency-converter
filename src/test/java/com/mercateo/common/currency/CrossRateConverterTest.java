@@ -286,4 +286,33 @@ public class CrossRateConverterTest {
         // 4.5 * 5.5 * 7.0 * 0.0025 = 0.433125
         assertThat(rate.getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.433125"));
     }
+
+    @Test
+    public void convertsAcrossDifferentClustersWhenConnected() {
+        // This is the key capability: converting between currencies that were previously
+        // in "different clusters" (different base currencies) when there's a connecting path
+        Money eurBase = new Money(BigDecimal.ONE, EUR);
+        Money hufFromEur = new Money(new BigDecimal("400"), HUF);
+        Money usdBase = new Money(BigDecimal.ONE, USD);
+        Money gbpFromUsd = new Money(new BigDecimal("0.84"), GBP);
+        Money eurFromUsd = new Money(new BigDecimal("0.92"), EUR); // Connects the clusters!
+        
+        // Previously this would fail with "different clusters" error
+        // Now it works: EUR->HUF from one cluster, USD->GBP from another, EUR<->USD connects them
+        FrozenCurrencyConverter converter = new FrozenCurrencyConverter(asList(
+            new ExchangeRate(eurBase, hufFromEur),
+            new ExchangeRate(usdBase, gbpFromUsd),
+            new ExchangeRate(usdBase, eurFromUsd) // Bridge between clusters
+        ));
+        
+        // Should convert HUF->GBP via HUF->EUR->USD->GBP
+        ExchangeRate rate = converter.getExchangeRate(HUF, GBP);
+        // (1/400) * (1/0.92) * 0.84 = 0.0022826...
+        assertThat(rate.getRateValue().getAmount()).isEqualByComparingTo(new BigDecimal("0.0022826087"));
+        
+        // Verify actual conversion works
+        Money hufAmount = new Money(new BigDecimal("10000"), HUF);
+        Money gbpAmount = converter.convertToPrice(hufAmount, GBP);
+        assertThat(gbpAmount.getAmount()).isEqualByComparingTo(new BigDecimal("22.83"));
+    }
 }
