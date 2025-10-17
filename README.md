@@ -19,9 +19,11 @@ It demoes basic levels of "Architecture of Intent" documentation:
 
 This “architecture of intent” keeps meta‑level guidance stable while enabling rapid, high‑quality, issue‑specific specifications with minimal review time.
 
-This is a low complexity setup. For larger projects that have a more involved evolutionary perspective, more framing layers are necessary. A compositional framework structure for that wider "Architecture of Intent"-scheme is not part of this demo scope. This proves already tractable, and this is where "the beef" is in this transformative journey.
+This is a low complexity setup. For larger projects that have a more involved evolutionary perspective, more framing layers are necessary. A compositional framework structure for that wider "Architecture of Intent"-scheme is not part of this demo scope. This proves already tractable, and this is where "the beef" goes in this transformative journey.
 
 ## 2) The Currency Converter Code Module
+
+(this section has been largely auto-generated based on agentic code analysis, with input of original shorter README content - code owners may be more competent to review)
 
 ![CI](https://github.com/beschoe/currency-converter/actions/workflows/ci.yml/badge.svg)
 
