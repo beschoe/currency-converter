@@ -14,6 +14,7 @@ It demoes basic levels of "Architecture of Intent" documentation:
 - Issue template: `.github/ISSUE_TEMPLATE/increment-issue.md` — a lightweight, reusable structure for cross‑project use. -> time invest: close to zero maintenance
 - Clarifications pass: `issues/inc-3-clarifications.md` — fast human‑in‑the‑loop disambiguation on scope, edge cases, and priorities. Drafted and submitted by the workflow spec in `docs/INC_ISSUE_AUTHORING.md` -> time invest: 10min of user review time
 - Final instructions for the Agent: `issues/inc-3-description.md` — the single source the Coding Agent executes. -> time invest: 10min of user review time
+- History (and planned future) of Increments: `docs/ROADMAP.md` - a log of issues, done / inProgress / planned, automatically maintained by  workflow of `docs/INC_ISSUE_AUTHORING.md`, consumed and updated by Github Coding Agent per instructions that are embedded in issue description -> time invest: automatically maintained
 
 - (and then there is .github\workflows\copilot-setup-steps.yml, which is for Github infrastructure setup. Defines the setup of the appropriate sandbox environment to enable the Coding Agent to integrate with testing framework etc (Maven..). To be activated via GitHub automated workflow, triggered automatically for all Coding Agent task executions -> time invest: 2h of repo analysis, GitHub schema docs, script testing)
 
