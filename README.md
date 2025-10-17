@@ -192,6 +192,6 @@ See documentation contained in the [release-chain](https://gitlab.build-unite.un
 
 ## License
 
-Internal Mercateo library - proprietary usage only.
+This project is for demo purposes only. The code is owned by Unite Network SE. All Rights reservered.
 
 
