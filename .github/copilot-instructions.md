@@ -113,7 +113,8 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 ### Key Constraints
 - All monetary amounts use BigDecimal for precision
 - Currency conversions require proper decimal scaling
-- Exchange rates are relative to common base currency (typically EUR)
+- Exchange rates support arbitrary base/quote currency pairs (INC-3: no canonical base required)
+- Synthetic cross-rates computed on-the-fly via BFS path-finding (max 4 hops)
 - JSON serialization must not expose internal `rateValue` field
 - Thread-safe updates for UpdateableCurrencyConverter
 
@@ -127,7 +128,7 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 
 ### Common Patterns
 - Use `new Money(BigDecimal, ConvertableCurrency)` for monetary values
-- Exchange rates created with base value (typically 1.0 EUR) and quote value
+- Exchange rates can have any base/quote currency pair; synthetic rates computed via graph traversal
 - Conversion strategies: TO_PRICE for invoices, PROPORTIONAL for calculations
 - Use EnumMap for currency-based lookups (performance optimization)
 
@@ -150,6 +151,9 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 
 ### Currency Conversion Process
 1. Get exchange rate between currencies via CurrencyConverter.getExchangeRate()
+   - Returns direct rate if available
+   - Otherwise computes synthetic rate via shortest path (BFS, max 4 hops)
+   - Throws IllegalArgumentException if no path exists
 2. Apply conversion using ExchangeRate.convert() with appropriate DecimalPlacesStrategy
 3. Handle same-currency conversions with proper scaling
 

@@ -9,7 +9,9 @@ A self-contained Java library for precise currency conversion in European B2B ma
 The `com.mercateo.common.currency` package provides a comprehensive currency conversion system that allows for:
 
 - Converting monetary amounts between different currencies with BigDecimal precision
-- Managing exchange rates between multiple currencies with automatic rate derivation
+- Managing exchange rates with unrestricted currency pairs (no canonical base currency required)
+- Automatic synthetic cross-rate calculation via shortest-path graph traversal (max 4 hops)
+- Direct rate precedence when both direct and synthetic paths are available
 - Handling proper decimal scaling and rounding according to currency-specific requirements
 - Supporting daily or more frequent exchange rate updates through immutable and updateable converters
 - Thread-safe currency conversion operations
@@ -55,7 +57,7 @@ String json = mapper.writeValueAsString(money);
 - **ConvertableCurrency**: Enum of supported ISO 4217 currencies with default scales and rounding
 - **ExchangeRate**: Represents conversion rates between two currencies with lazy calculation
 - **CurrencyConverter**: Interface for all currency conversion operations
-- **FrozenCurrencyConverter**: Immutable implementation with fixed exchange rates
+- **FrozenCurrencyConverter**: Immutable implementation with graph-based exchange rate storage and on-the-fly synthetic rate calculation
 - **UpdateableCurrencyConverter**: Thread-safe wrapper allowing runtime rate updates
 - **DecimalPlacesStrategy**: Precision strategies (TO_PRICE for invoices, PROPORTIONAL for calculations)
 

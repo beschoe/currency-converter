@@ -43,16 +43,30 @@ Short scope note:
 Link: issues/inc-2-description.md (to be created after clarifications)
 
 ---
-## INC-3: Lift canonical base currency constraint (Status: Planned)
+## INC-3: Lift canonical base currency constraint (Status: Done)
 Goal: Allow ingestion of unrestricted currency pairs and enable on-the-fly synthetic cross-rate calculation in `getExchangeRate(from, to)` without persistent precomputation/caching.
 
-Short scope note:
-- Ingest directed currency pair rates for arbitrary bases (no single canonical base required).
-- Provide synthetic exchange rates by composing available pair chains when a direct rate is absent.
-- For synthetic pairs, perform calculations on-the-fly per request; avoid persistent caching/precomputation.
-- Defer algorithmic and technology details to the implementation issue and Coding Agent per `.github/copilot-instructions.md`.
+Implementation summary:
+- Removed requirement for single canonical base currency
+- Implemented graph-based exchange rate storage using EnumMap
+- Added BFS path-finding algorithm for shortest-hop synthetic rate calculation
+- Maximum 4 hops enforced with deterministic enum-ordinal-based neighbor traversal
+- Direct rate precedence over synthetic rates maintained
+- Precision-preserving rate composition using scaled base/quote values
+- All existing tests pass; 11 new tests added for synthetic rate scenarios
 
-Link: issues/inc-3-description.md (to be created after clarifications)
+Delivered features:
+- Unrestricted pair ingestion (any base/quote currency combinations)
+- On-the-fly synthetic cross-rate calculation with no persistent caching
+- Deterministic shortest-hop path selection (BFS with enum ordering)
+- Direct rate takes precedence when both direct and synthetic paths exist
+- IllegalArgumentException thrown when no path exists between currencies
+- 4-hop maximum path length enforced
+- Precision and rounding consistent with existing DecimalPlacesStrategy
+- JSON behavior unchanged (no new fields, rateValue not exposed)
+- Backward compatibility: all 35 existing tests pass unchanged
+
+See: PR #[to be filled] and issues/inc-3-description.md
 
 ---
 ## Future (Unscheduled Fragments)
