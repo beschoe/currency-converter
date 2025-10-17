@@ -1,4 +1,24 @@
-# Currency Converter
+# How to instruct the Coding Agent -> see section 1
+# On the Currency Converter module -> see section 2
+
+## 1) Architecture of Intent: How this repo guides the Coding Agent
+
+This repository is a demo of “systemic empowerment” with the GitHub Coding Agent. It separates stable, reusable instruction layers from issue‑specific business input and funnels them into a final, executable issue description.
+
+It demoes basic levels of "Architecture of Intent" documentation:
+
+- Highest‑level frame: `.github/copilot-instructions.md` — global guardrails and success criteria, curated from best practices and refined in trials.
+- Issue authoring process: `docs/INC_ISSUE_AUTHORING.md` — a disciplined workflow that transforms a raw, business‑only prompt into an authorized, implementation‑ready issue. -> time invest: months of personal refinement work "on the go", around 20 hours, stabilized now
+- Business source prompt: `docs/Prompt_with_BusinessRequirements.md` — the handwritten request from the “Architect of Intent” (AI instructor/reviewer) -> time invest 30min of concentrated writing
+- Issue template: `.github/ISSUE_TEMPLATE/increment-issue.md` — a lightweight, reusable structure for cross‑project use. -> time invest: close to zero maintenance
+- Clarifications pass: `issues/inc-3-clarifications.md` — fast human‑in‑the‑loop disambiguation on scope, edge cases, and priorities. -> time invest: 10min of user review time
+- Final instructions for the Agent: `issues/inc-3-description.md` — the single source the Coding Agent executes. -> time invest: 10min of user review time
+
+This “architecture of intent” keeps meta‑level guidance stable while enabling rapid, high‑quality, issue‑specific specifications with minimal review time.
+
+This is a low complexity setup. For larger projects that have a more involved evolutionary perspective, more framing layers are necessary. A compositional framework structure for that wider "Architecture of Intent"-scheme is not part of this demo scope. This proves already tractable, and this is where "the beef" is in this transformative journey.
+
+## 2) The Currency Converter Code Module
 
 ![CI](https://github.com/beschoe/currency-converter/actions/workflows/ci.yml/badge.svg)
 
