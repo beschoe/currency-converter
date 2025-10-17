@@ -43,16 +43,31 @@ Short scope note:
 Link: issues/inc-2-description.md (to be created after clarifications)
 
 ---
-## INC-3: Lift canonical base currency constraint (Status: Planned)
+## INC-3: Lift canonical base currency constraint (Status: Done)
 Goal: Allow ingestion of unrestricted currency pairs and enable on-the-fly synthetic cross-rate calculation in `getExchangeRate(from, to)` without persistent precomputation/caching.
 
-Short scope note:
-- Ingest directed currency pair rates for arbitrary bases (no single canonical base required).
-- Provide synthetic exchange rates by composing available pair chains when a direct rate is absent.
-- For synthetic pairs, perform calculations on-the-fly per request; avoid persistent caching/precomputation.
-- Defer algorithmic and technology details to the implementation issue and Coding Agent per `.github/copilot-instructions.md`.
+Implementation summary:
+- Implemented adjacency list-based graph structure to support arbitrary currency pairs
+- Added BFS-based shortest-path algorithm with 4-hop maximum limit for synthetic rate calculation
+- Direct rates take precedence over synthetic paths when both exist
+- Deterministic path selection: always chooses shortest path (fewest hops)
+- Maintains full backward compatibility with existing base-currency logic
+- No new runtime dependencies added
+- All precision/rounding behavior preserved via existing DecimalPlacesStrategy
+- JSON serialization behavior unchanged
 
-Link: issues/inc-3-description.md (to be created after clarifications)
+Test coverage:
+- Direct rate conversion (backward compatibility maintained)
+- Synthetic rates: 2-hop, 3-hop, 4-hop paths
+- No-path scenario (throws IllegalArgumentException)
+- Same-currency conversion (identity rate)
+- Direct vs synthetic precedence verification
+- Multiple path determinism (shortest path selected)
+- Hop-limit boundary enforcement
+
+Status: Merged and validated. All 45 tests passing (35 existing + 10 new).
+
+Link: issues/inc-3-description.md
 
 ---
 ## Future (Unscheduled Fragments)

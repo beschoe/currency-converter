@@ -113,7 +113,8 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 ### Key Constraints
 - All monetary amounts use BigDecimal for precision
 - Currency conversions require proper decimal scaling
-- Exchange rates are relative to common base currency (typically EUR)
+- Supports arbitrary currency pairs with synthetic cross-rate calculation (max 4 hops)
+- Direct exchange rates take precedence over synthetic paths
 - JSON serialization must not expose internal `rateValue` field
 - Thread-safe updates for UpdateableCurrencyConverter
 
@@ -127,14 +128,16 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 
 ### Common Patterns
 - Use `new Money(BigDecimal, ConvertableCurrency)` for monetary values
-- Exchange rates created with base value (typically 1.0 EUR) and quote value
+- Exchange rates created with base and quote values for any currency pair
 - Conversion strategies: TO_PRICE for invoices, PROPORTIONAL for calculations
 - Use EnumMap for currency-based lookups (performance optimization)
+- BFS-based shortest-path finding for synthetic cross-rate calculation
 
 ### Error Handling
-- `IllegalArgumentException` for unknown currencies or invalid conversion pairs
+- `IllegalArgumentException` for unknown currencies, invalid conversion pairs, or no exchange rate path found
 - `IllegalStateException` for conflicting exchange rates
 - Validate currency compatibility in Money.compareTo()
+- Maximum synthetic path length: 4 hops
 
 ### Integration Points
 - Jackson JSON serialization via `MoneyJacksonModule`
@@ -150,6 +153,9 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 
 ### Currency Conversion Process
 1. Get exchange rate between currencies via CurrencyConverter.getExchangeRate()
+   - Direct rates are returned if available (takes precedence)
+   - Synthetic cross-rates are computed on-the-fly via shortest path (max 4 hops)
+   - Throws IllegalArgumentException if no path exists
 2. Apply conversion using ExchangeRate.convert() with appropriate DecimalPlacesStrategy
 3. Handle same-currency conversions with proper scaling
 
@@ -157,6 +163,8 @@ Use the Maven Wrapper from the project root for reproducible, non-interactive bu
 - EnumMap usage for O(1) currency lookups
 - Lazy calculation and caching of rate values in ExchangeRate
 - Minimal object creation in conversion paths
+- BFS path finding with early termination for synthetic rates
+- No persistent caching of synthetic paths (on-demand calculation)
 
 ### Extension Points
 - Implement CurrencyConverter interface for different rate sources
