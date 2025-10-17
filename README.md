@@ -10,7 +10,7 @@ It demoes basic levels of "Architecture of Intent" documentation:
 
 - Highest‑level frame: `.github/copilot-instructions.md` — global guardrails and success criteria, following detailed docs provided by GitHub, curated from emerging best practices and refined in trials.
 - Issue authoring process: `docs/INC_ISSUE_AUTHORING.md` — a disciplined workflow that transforms a raw, business‑only prompt into an authorized, implementation‑ready issue. -> time invest: months of personal refinement work "on the go", around 20 hours, stabilized now
-- Business source prompt: `docs/Prompt_with_BusinessRequirements.md` — the handwritten request from the “Architect of Intent” (AI instructor/reviewer) -> time invest 30min of concentrated writing
+- Business source prompt: `docs/Prompt_with_BusinessRequirements.md` — the original "handwritten" request from the “Architect of Intent” (AI instructor/reviewer). This is the "true and authoritative" human input for this feature request -> time invest 30min of concentrated writing, with some exercise needs zero iterations
 - Issue template: `.github/ISSUE_TEMPLATE/increment-issue.md` — a lightweight, reusable structure for cross‑project use. -> time invest: close to zero maintenance
 - Clarifications pass: `issues/inc-3-clarifications.md` — fast human‑in‑the‑loop disambiguation on scope, edge cases, and priorities. -> time invest: 10min of user review time
 - Final instructions for the Agent: `issues/inc-3-description.md` — the single source the Coding Agent executes. -> time invest: 10min of user review time
