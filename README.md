@@ -36,6 +36,7 @@ The `com.mercateo.common.currency` package provides a comprehensive currency con
 
 - Converting monetary amounts between different currencies with BigDecimal precision
 - Managing exchange rates between multiple currencies with automatic rate derivation
+- Supporting arbitrary currency pairs with on-the-fly synthetic cross-rate calculation (up to 4 hops)
 - Handling proper decimal scaling and rounding according to currency-specific requirements
 - Supporting daily or more frequent exchange rate updates through immutable and updateable converters
 - Thread-safe currency conversion operations
@@ -152,12 +153,35 @@ Money customResult = converter.convert(amount, targetCurrency,
 ### Exchange Rate Management
 
 ```java
-// Get exchange rate between currencies
+// Get exchange rate between currencies (direct or synthetic)
 ExchangeRate rate = converter.getExchangeRate(EUR, USD);
 
 // Manual conversion using exchange rate
 Money converted = rate.convert(money, DecimalPlacesStrategy.PROPORTIONAL, RoundingMode.HALF_EVEN);
 ```
+
+### Synthetic Cross-Rates
+
+The library automatically computes synthetic cross-rates when a direct exchange rate is not available:
+
+```java
+// Create converter with arbitrary currency pairs
+List<ExchangeRate> rates = Arrays.asList(
+    new ExchangeRate(new Money(ONE, USD), new Money("0.92", EUR)),  // USD -> EUR
+    new ExchangeRate(new Money(ONE, EUR), new Money("0.84", GBP))   // EUR -> GBP
+);
+FrozenCurrencyConverter converter = new FrozenCurrencyConverter(rates);
+
+// Automatically computes USD -> GBP via EUR (synthetic 2-hop path)
+Money gbp = converter.convertToPrice(new Money("100.00", USD), GBP);
+// Result: 77.28 GBP (100 * 0.92 * 0.84)
+```
+
+Features:
+- Deterministic shortest-path selection (up to 4 hops maximum)
+- Direct rates take precedence over synthetic paths
+- On-the-fly calculation without persistent caching
+- Throws `IllegalArgumentException` when no path exists
 
 ### Runtime Updates
 
@@ -181,9 +205,10 @@ updateableConverter.set(newRates);
 
 ## Error Handling
 
-- `IllegalArgumentException`: Unknown currencies or invalid conversion pairs
+- `IllegalArgumentException`: Unknown currencies, invalid conversion pairs, or no exchange rate path found
 - `IllegalStateException`: Conflicting exchange rates during initialization
 - Currency compatibility validation in Money.compareTo()
+- Maximum path length: 4 hops for synthetic cross-rates
 
 ## Contributing
 
