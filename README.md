@@ -1,4 +1,5 @@
 **How to instruct the Coding Agent -> see section 1**
+
 **On the Currency Converter module -> see section 2**
 
 ## 1) Architecture of Intent: How this repo guides the Coding Agent
