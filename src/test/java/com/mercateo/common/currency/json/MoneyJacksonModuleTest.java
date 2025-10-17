@@ -49,4 +49,26 @@ public class MoneyJacksonModuleTest {
         assertThat(json).doesNotContain("rateValue");
         assertThat(deserialized).isEqualTo(exchangeRate);
     }
+
+    @Test
+    public void shouldSerializeComposedExchangeRate_withoutExposingCalculationDetails() throws Exception {
+        // Create a composed exchange rate (simulating what synthetic cross-rates produce)
+        Money baseValue = new Money(BigDecimal.ONE, ConvertableCurrency.USD);
+        Money quoteValue = new Money(new BigDecimal("0.7728"), ConvertableCurrency.GBP);
+        ExchangeRate composedRate = new ExchangeRate(baseValue, quoteValue);
+
+        String json = objectMapper.writeValueAsString(composedRate);
+        ExchangeRate deserialized = objectMapper.readValue(json, ExchangeRate.class);
+
+        // Verify JSON structure: should not expose internal rateValue or composition details
+        assertThat(json).contains("baseValue");
+        assertThat(json).contains("quoteValue");
+        assertThat(json).doesNotContain("rateValue");
+        assertThat(json).doesNotContain("synthetic");
+        assertThat(json).doesNotContain("path");
+        
+        // Verify deserialized rate is equivalent
+        assertThat(deserialized).isEqualTo(composedRate);
+        assertThat(deserialized.getRateValue().getAmount()).isEqualByComparingTo(composedRate.getRateValue().getAmount());
+    }
 }
